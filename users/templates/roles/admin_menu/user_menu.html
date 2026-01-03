@@ -1,0 +1,346 @@
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>User Management - Custom</title>
+<style>
+    /* Root Variables */
+    :root {
+        --um-primary: #3b82f6;
+        --um-bg-light: #f4f6fa;
+        --um-bg-dark: #0f172a;
+        --um-text-light: #ffffff;
+        --um-text-dark: #1e293b;
+        --um-border: #cbd5e1;
+        --um-radius: 8px;
+    }
+
+    body.um-body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: var(--um-bg-light);
+        color: var(--um-text-dark);
+        display: flex;
+        height: 100vh;
+        overflow: auto;
+    }
+    #user_menu {
+  margin-top: -19px;
+  }
+    /* Sidebar */
+
+    /* Main Content */
+    .um-main {
+        flex: 1;
+        overflow-y: auto;
+        padding: 30px;
+    }
+
+    .um-card {
+        background: #ffffff;
+        padding: 20px;
+        border-radius: var(--um-radius);
+        border: 1px solid var(--um-border);
+        margin-top:13px
+
+    }
+
+    .um-header-title {
+        font-size: 28px;
+        font-weight: bold;
+    }
+
+    /* Search + Filters */
+    #usersearch {
+  margin-bottom: 18px;
+}
+
+    .um-input, .um-select {
+        padding: 8px 10px;
+        border: 1px solid var(--um-border);
+        border-radius: var(--um-radius);
+    }
+
+    /* Table */
+    .um-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .um-table th {
+        background: #e2e8f0;
+        padding: 10px;
+        text-align: left;
+        font-size: 12px;
+        text-transform: uppercase;
+    }
+
+    .um-table td {
+        padding: 12px;
+        border-bottom: 1px solid var(--um-border);
+    }
+
+    .um-user-box {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .um-user-box img {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+    }
+
+    .um-status-active {
+        background: #d1fae5;
+        color: #065f46;
+        padding: 4px 8px;
+        border-radius: 12px;
+        font-size: 12px;
+    }
+
+    .um-status-blocked {
+        background: #fee2e2;
+        color: #991b1b;
+        padding: 4px 8px;
+        border-radius: 12px;
+        font-size: 12px;
+    }
+
+    .um-status-pending{
+    background: #ffbc1e;
+        color: #780000;
+        padding: 4px 8px;
+        border-radius: 12px;
+        font-size: 12px;
+    }
+    .um-status-rejected{
+       background: #fee2e2;
+        color: #991b1b;
+        padding: 4px 8px;
+        border-radius: 12px;
+        font-size: 12px;
+    }
+
+    .um-action-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 14px;
+        padding: 4px 8px;
+        border-radius: var(--um-radius);
+    }
+
+    .um-block { color: #dc2626; }
+    .um-unblock { color: #059669; }
+</style>
+</head>
+<body class="um-body">
+
+
+
+
+    <main class="um-main">
+        <h2 class="um-header-title">User Management</h2>
+        <p>Manage all registered users</p>
+
+        <div class="um-card">
+            <div class="um-filters">
+                <input id="usersearch" class="um-input" placeholder="Search by name or email..." />
+
+            </div>
+
+            <table class="um-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+
+
+                        <th>Email</th>
+
+                        <th>Unique-id</th>
+                        <th>Role</th>
+                        <th>Reg Date</th>
+                        <th>live</th>
+                        <th>Act. status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="userdetails">
+    {% for i in alluser %}
+
+    <tr>
+
+        <td>
+            <div class="um-user-box">
+                {% for j in allprofile %}
+                    {% if i.id == j.user.id %}
+                        <img src="{% url 'profile_photo' j.id %}" alt="">
+                    {% endif %}
+                {% endfor %}
+                {{ i.username }}
+            </div>
+        </td>
+
+        <td>{{ i.email }}</td>
+         <td>{{ i.reg_no }}</td>
+        <td>{{ i.role }}</td>
+        <td>{{i.created_on}}</td>
+        {% if i.is_Active == True %}
+             <td >  online</td>
+        {%else %}
+              <td> offline</td>
+        {% endif %}
+
+       <td>
+    {% if i.is_Verified == -2 %}
+        <span class="um-status-blocked">Blocked</span>
+    {% elif i.is_Verified == -1 %}
+        <span class="um-status-rejected">rejected</span>
+      {% elif i.is_Verified == 0 or i.is_Verified == 2 %}
+        <span class="um-status-pending">pending </span>
+       {% else%}
+        <span class="um-status-active">active</span>
+    {% endif %}
+</td>
+       <td>
+           {% if i.is_Verified == -2 %}
+    <button class="um-action-btn um-block"
+            onclick="updateStatus('{{ i.id }}', 1)">Unblock</button>
+             {% elif i.is_Verified == -1 %}
+    <button class="um-action-btn um-block"
+            onclick="updateStatus('{{ i.id }}', 1)">approve</button>
+        {% elif i.is_Verified == 1 %}
+           <button class="um-action-btn um-block"
+           onclick="updateStatus('{{ i.id }}', -2)"  > Block </button>
+             {% else  %}
+    <button class="um-action-btn um-block"
+            onclick="updateStatus('{{ i.id }}', 1)">approve</button>
+
+           {% endif %}
+</td>
+    </tr>
+    {% endfor %}
+</tbody>
+            </table>
+        </div>
+    </main>
+
+
+<!-- Modal -->
+<div id="um-modal" class="um-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); align-items:center; justify-content:center; z-index:9999;">
+    <div class="um-modal-content" style="background:#fff; padding:20px; border-radius:10px; width:320px; text-align:center; position:relative;">
+        <span id="um-modal-close" style="position:absolute; top:10px; right:15px; cursor:pointer; font-size:20px;">&times;</span>
+        <img id="um-modal-img" src="" style="width:120px; height:120px; border-radius:50%; margin-bottom:15px;" />
+        <h3 id="um-modal-name" style="margin:0; font-size:20px;"></h3>
+        <p id="um-modal-email" style="color:#555; margin:5px 0;"></p>
+    </div>
+</div>
+
+<script>
+
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== "") {
+        const cookies = document.cookie.split(";");
+        for (let cookie of cookies) {
+            cookie = cookie.trim();
+            if (cookie.startsWith(name + "=")) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+function updateStatus(userId, approve) {
+    approve = Number(approve);
+
+    fetch('/roles/update_user_status/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: JSON.stringify({ user_id: userId, approve: approve })
+    })
+    .then(res => res.json())
+    .then(data => {
+        console.log(data);  // debug
+        if (data.success) {
+            // Force reload
+            location.reload();
+        } else {
+            alert(data.error);
+        }
+    })
+    .catch(err => console.log("ERROR:", err));
+}
+
+
+
+
+
+// Open modal when clicking profile image
+function enableModal() {
+    document.querySelectorAll('.um-user-box img').forEach(img => {
+        img.style.cursor = 'pointer';
+        img.addEventListener('click', function () {
+            const row = this.closest('tr');
+            const name = row.querySelector('.um-user-box').innerText.trim();
+            const email = row.children[1].innerText.trim();
+
+            document.getElementById('um-modal-img').src = this.src;
+            document.getElementById('um-modal-name').innerText = name;
+            document.getElementById('um-modal-email').innerText = email;
+            document.getElementById('um-modal').style.display = 'flex';
+        });
+    });
+}
+
+document.getElementById('um-modal-close').addEventListener('click', () => {
+    document.getElementById('um-modal').style.display = 'none';
+});
+
+document.getElementById('um-modal').addEventListener('click', (e) => {
+    if (e.target.id === 'um-modal') {
+        document.getElementById('um-modal').style.display = 'none';
+    }
+});
+
+enableModal();
+
+      document.addEventListener("DOMContentLoaded", function () {
+
+    const searchInput = document.getElementById("usersearch");
+    const tableRows = document.querySelectorAll("#userdetails tr");
+
+    searchInput.addEventListener("keyup", function () {
+        let filter = this.value.toLowerCase().trim();
+
+        tableRows.forEach(row => {
+            let rowText = row.innerText.toLowerCase();
+
+            if (rowText.includes(filter)) {
+                row.style.display = "";
+            } else {
+                row.style.display = "none";
+            }
+        });
+    });
+
+});
+
+
+</script>
+
+</body>
+</html>

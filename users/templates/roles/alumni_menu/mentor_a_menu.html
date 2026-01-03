@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mentorship Requests</title>
+
+<style>
+/* ================= ROOT ================= */
+:root {
+  --primary:#137fec;
+  --bg-light:#f6f7f8;
+  --card:#ffffff;
+  --border:#cfdbe7;
+  --text:#0d141b;
+  --muted:#4c739a;
+  --radius:12px;
+  --shadow:0 2px 6px rgba(0,0,0,.08);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* ================= MAIN LAYOUT ================= */
+.main-al {
+  padding:30px;
+  background:var(--bg-light);
+  min-height:100vh;
+  color:var(--text);
+}
+
+/* ================= HEADER ================= */
+.header-al {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:25px;
+}
+
+.header-al h1 {
+  margin:0;
+  font-size:32px;
+}
+
+.export-al {
+  border:1px solid var(--border);
+  padding:8px 14px;
+  border-radius:8px;
+  cursor:pointer;
+  background:#fff;
+}
+
+/* ================= STATS ================= */
+.stats-al {
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:20px;
+  margin-bottom:30px;
+}
+
+.stat-al {
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:20px;
+  box-shadow:var(--shadow);
+}
+
+.stat-al h3 {
+  margin:0;
+  font-size:14px;
+  color:var(--muted);
+}
+
+.stat-al p {
+  margin:8px 0 0;
+  font-size:30px;
+  font-weight:bold;
+}
+
+/* ================= FILTER ================= */
+.filters-al {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:20px;
+}
+
+.search-al input {
+  padding:10px 14px;
+  width:280px;
+  border-radius:8px;
+  border:1px solid var(--border);
+}
+
+.chips-al button {
+  border:none;
+  padding:6px 14px;
+  border-radius:20px;
+  margin-right:6px;
+  cursor:pointer;
+}
+
+.chips-al .active-al {
+  background:var(--primary);
+  color:white;
+}
+
+/* ================= REQUEST CARD ================= */
+.card-al {
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:20px;
+  margin-bottom:16px;
+  box-shadow:var(--shadow);
+}
+
+.card-row-al {
+  display:flex;
+  gap:20px;
+}
+
+.avatar-al {
+  width:56px;
+  height:56px;
+  border-radius:50%;
+  background:#ccc;
+}
+
+.status-al {
+  padding:4px 12px;
+  border-radius:20px;
+  font-size:12px;
+  font-weight:bold;
+}
+
+.pending-al { background:#fff3cd; color:#856404; }
+.accepted-al { background:#d4edda; color:#155724; }
+
+.actions-al button {
+  padding:8px 14px;
+  border-radius:8px;
+  border:none;
+  cursor:pointer;
+  margin-top:6px;
+}
+
+.accept-al { background:var(--primary); color:white; }
+.reject-al { background:#ffe5e5; color:#c00; }
+.close-al { background:#eee; }
+
+
+    .filter-btn {
+  transition: 0.2s;
+}
+.filter-btn:hover {
+  opacity: 0.85;
+}
+    /* ================= MODAL ================= */
+.modal-al {
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.5);
+  z-index:999;
+  align-items:center;
+  justify-content:center;
+}
+
+.modal-content-al {
+  background:#fff;
+  width:420px;
+  border-radius:12px;
+  padding:20px;
+  position:relative;
+  animation:fadeIn .2s ease;
+}
+
+.close-al {
+  position:absolute;
+  right:14px;
+  top:10px;
+  font-size:22px;
+  cursor:pointer;
+}
+
+.modal-header-al {
+  text-align:center;
+  margin-bottom:16px;
+}
+
+.modal-avatar-al {
+  width:90px;
+  height:90px;
+  border-radius:50%;
+  object-fit:cover;
+  background:#ddd;
+}
+
+.modal-body-al p {
+  margin:6px 0;
+}
+
+@keyframes fadeIn {
+  from {transform:scale(.9);opacity:0}
+  to {transform:scale(1);opacity:1}
+}
+
+</style>
+</head>
+
+<body>
+
+<main class="main-al">
+
+  <!-- HEADER -->
+  <div class="header-al">
+    <div>
+      <h1>Mentorship Requests</h1>
+      <p>Manage incoming mentorship applications.</p>
+    </div>
+    <button class="export-al">⬇ Export CSV</button>
+  </div>
+
+  <div class="stats-al">
+  <div class="stat-al">
+    <h3>Total Requests</h3>
+    <p>{{ total_requests }}</p>
+  </div>
+
+  <div class="stat-al">
+    <h3>Pending Review</h3>
+    <p>{{ pending_count }}</p>
+  </div>
+
+  <div class="stat-al">
+    <h3>Active Mentees</h3>
+    <p>{{ accepted_count }}</p>
+  </div>
+</div>
+
+
+  <!-- FILTERS -->
+  <div class="filters-al">
+    <div class="search-al">
+      <input type="text" id="searchInput" placeholder="Search by student name">
+    </div>
+   <div class="chips-al">
+  <button class="filter-btn active-al" data-filter="all">All</button>
+  <button class="filter-btn" data-filter="pending">Pending</button>
+  <button class="filter-btn" data-filter="accepted">Accepted</button>
+  <button class="filter-btn" data-filter="rejected">Rejected</button>
+</div>
+
+  </div>
+
+  <!-- REQUEST CARD -->
+  {% for req in requests %}
+<div class="card-al mentorship-card" data-name="{{ req.student.username|lower }}" data-status="{{ req.status }}">
+
+  <div class="card-row-al">
+    <div class="avatar-al"  onclick="openProfileModal(
+       '{{ req.student.username }}',
+       '{{ req.student.email }}',
+       '{{ req.student.passout_Year }}',
+       '{{ req.profile.curnt_wrk_role|default:"" }}',
+       '{{ req.profile.skill|default:"" }}',
+       '{{ req.profile.loc|default:"" }}',
+       '{{ req.profile.wexp|default:"" }}',
+       '{{ req.profile.bio|default:"" }}',
+       '{% if req.profile and req.profile.photo %}{% url "serve_profile_photo" req.profile.id %}{% endif %}'
+     )">
+         {% if req.profile and req.profile.photo %}
+    <img src="{% url 'serve_profile_photo' req.profile.id %}"
+         style="width:56px;height:56px;border-radius:50%;object-fit:cover;">
+  {% endif %}
+    </div>
+
+    <div style="flex:1">
+      <h4>{{ req.student.username }}</h4>
+      <small>Class of {{ req.student.passout_Year }}</small>
+
+      {% if req.profile %}
+        <p><b>Background:</b> {{ req.profile.curnt_wrk_role }}</p>
+      {% endif %}
+
+      <p><b>Reason:</b> {{ req.message }}</p>
+    </div>
+
+    <div>
+      <div class="status-al
+        {% if req.status == 'pending' %}pending-al
+        {% elif req.status == 'accepted' %}accepted-al
+        {% else %}rejected-al{% endif %}">
+        {{ req.status|upper }}
+      </div>
+
+      {% if req.status == "pending" %}
+      <div class="actions-al">
+        <button class="accept-al"
+          onclick="updateStatus('{{ req.id }}','accepted')">
+          Accept
+        </button>
+
+        <button class="reject-al"
+          onclick="updateStatus('{{ req.id }}','rejected')">
+          Reject
+        </button>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% empty %}
+<p>No mentorship requests yet.</p>
+{% endfor %}
+
+
+
+</main>
+
+<div id="profileModal-al" class="modal-al">
+  <div class="modal-content-al">
+    <span class="close-al" onclick="closeProfileModal()">&times;</span>
+
+    <div class="modal-header-al">
+      <img id="modalPhoto-al" class="modal-avatar-al">
+      <h2 id="modalName-al"></h2>
+      <p id="modalEmail-al"></p>
+    </div>
+
+    <div class="modal-body-al">
+      <p><b>Passout Year:</b> <span id="modalYear-al"></span></p>
+      <p><b>Current Role:</b> <span id="modalRole-al"></span></p>
+      <p><b>Skills:</b> <span id="modalSkill-al"></span></p>
+      <p><b>Location:</b> <span id="modalLoc-al"></span></p>
+      <p><b>Work Experience:</b> <span id="modalExp-al"></span></p>
+      <p><b>Bio:</b></p>
+      <p id="modalBio-al"></p>
+    </div>
+  </div>
+</div>
+
+<script>
+function updateStatus(requestId, status) {
+  if (!confirm(`Are you sure you want to ${status} this request?`)) return;
+
+  fetch("/update-mentorship-status/", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-CSRFToken": getCookie("csrftoken")
+    },
+    body: JSON.stringify({
+      request_id: requestId,
+      status: status
+    })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.success) {
+      alert("Status updated successfully!");
+      location.reload();
+    } else {
+      alert(data.error || "Something went wrong");
+    }
+  })
+  .catch(err => {
+    console.error(err);
+    alert("Server error");
+  });
+}
+
+/* CSRF helper */
+function getCookie(name) {
+  let cookieValue = null;
+  if (document.cookie && document.cookie !== "") {
+    const cookies = document.cookie.split(";");
+    for (let cookie of cookies) {
+      cookie = cookie.trim();
+      if (cookie.startsWith(name + "=")) {
+        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+        break;
+      }
+    }
+  }
+  return cookieValue;
+}
+</script>
+
+</body>
+<script>
+const searchInput = document.getElementById("searchInput");
+const filterButtons = document.querySelectorAll(".filter-btn");
+const cards = document.querySelectorAll(".mentorship-card");
+
+let activeFilter = "all";
+
+// 🔍 SEARCH
+searchInput.addEventListener("keyup", filterCards);
+
+// 🏷 FILTER BUTTONS
+filterButtons.forEach(btn => {
+  btn.addEventListener("click", () => {
+    filterButtons.forEach(b => b.classList.remove("active-al"));
+    btn.classList.add("active-al");
+    activeFilter = btn.dataset.filter;
+    filterCards();
+  });
+});
+
+function filterCards() {
+  let searchText = searchInput.value.toLowerCase();
+
+  cards.forEach(card => {
+    let name = card.dataset.name;
+    let status = card.dataset.status;
+
+    let matchSearch = name.includes(searchText);
+    let matchFilter = activeFilter === "all" || status === activeFilter;
+
+    card.style.display = (matchSearch && matchFilter) ? "block" : "none";
+  });
+}
+
+function openProfileModal(
+  name, email, year, role, skill, loc, exp, bio, photo
+) {
+  document.getElementById("modalName-al").innerText = name;
+  document.getElementById("modalEmail-al").innerText = email;
+  document.getElementById("modalYear-al").innerText = year || "-";
+  document.getElementById("modalRole-al").innerText = role || "-";
+  document.getElementById("modalSkill-al").innerText = skill || "-";
+  document.getElementById("modalLoc-al").innerText = loc || "-";
+  document.getElementById("modalExp-al").innerText = exp || "-";
+  document.getElementById("modalBio-al").innerText = bio || "-";
+
+  const img = document.getElementById("modalPhoto-al");
+  if (photo) {
+    img.src = photo;
+    img.style.display = "block";
+  } else {
+    img.style.display = "none";
+  }
+
+  document.getElementById("profileModal-al").style.display = "flex";
+}
+
+function closeProfileModal() {
+  document.getElementById("profileModal-al").style.display = "none";
+}
+</script>
+
+
+
+</html>

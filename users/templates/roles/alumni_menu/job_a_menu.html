@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Posts Management</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
+
+<style>
+
+/* --------------------------------------------------------
+   YOUR SAME CSS (No change)
+--------------------------------------------------------- */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Inter", sans-serif;
+}
+
+.body-posts {
+    background: #f3f4f6;
+    color: #333;
+    min-height: 100vh;   /* allow auto height */
+    overflow-y: auto;     /* enable scroll */
+    display: flex;
+}
+
+
+/* ---------- MAIN AREA ---------- */
+.main-posts {
+    flex: 1;
+    overflow-y: auto;
+    padding: 25px;
+}
+
+.posts-title { font-size: 24px; font-weight: 700; }
+.posts-sub { color: #666; margin-top: 5px; font-size: 14px; }
+
+.posts-create-btn {
+    background: #3B82F6;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    display: inline-flex;
+    gap: 5px;
+    align-items: center;
+}
+
+/* TABLE */
+.posts-table-container { overflow-x: auto; margin-top: 20px; }
+.posts-table { width: 100%; border-collapse: collapse; background: white; }
+.posts-table th {
+    background: #e5e7eb;
+    padding: 12px;
+    font-size: 12px;
+    text-transform: uppercase;
+}
+.posts-table td {
+    padding: 12px;
+    border-top: 1px solid #ddd;
+    font-size: 14px;
+}
+.action-btn { margin-left: 10px; cursor: pointer; font-weight: 600; }
+
+/* --------------------------------------------------
+   CREATE POST FORM CSS (your original kept same)
+-------------------------------------------------- */
+
+.create-wrapper { display: none; height: auto; padding: 20px; }
+.create-main { background: white; padding: 20px; border-radius: 10px; }
+
+.create-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.create-grid-2 { grid-column: span 2; }
+
+.create-input, .create-select, .create-textarea {
+    width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px;
+}
+
+.create-textarea { height: 120px; }
+
+.create-btn-primary {
+    background: #3B82F6;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+}
+
+
+.top-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 20px;
+}
+/* -------------------------------------------------------- */
+
+</style>
+</head>
+
+<body class="body-posts">
+
+<!-- ============================================================= -->
+<!--   SECTION 1 : All Posts Overview (Default Visible)             -->
+<!-- ============================================================= -->
+<main class="main-posts" id="postsPage">
+
+    <div style="display:flex; justify-content:space-between;">
+        <div>
+            <h1 class="posts-title">All Posts Overview</h1>
+            <p class="posts-sub">Manage all posts from alumni and administrators.</p>
+        </div>
+
+         <div class="top-actions">
+        <button class="posts-create-btn" onclick="openCreateForm()">➕ Create New Post</button>
+    </div>
+    </div>
+
+    <div style="background:white; padding:10px; margin-top:20px; border-radius:6px;">
+        <input  aria-label=" " id="postsearch" type="text" class="filter-input" placeholder="Search...">
+    </div>
+
+    <!-- Posts Table -->
+    <div class="posts-table-container">
+        <table class="posts-table">
+            <thead>
+                <tr>
+
+                    <th>Title</th>
+
+                    <th>Type</th>
+                    <th>Company</th>
+                    <th>Description</th>
+                    <th>link for apply</th>
+                    <th>Valid till</th>
+
+                    <th>Status</th>
+
+
+
+                </tr>
+            </thead>
+
+            <tbody id="tablepost">
+                {% for j in jobi %}
+                <tr>
+                    <td>{{j.title}}</td>
+
+                    <td>{{j.type}}</td>
+                    <td>{{j.company}}</td>
+                    <td>{{j.description}}</td>
+                    <td><a href="{{j.link}}" target="_blank">link</a></td>
+                    <td>{{j.expiry}}</td>
+<td>
+        {% if j.post_status == 0 %}
+            <span style="color: orange;">Pending</span>
+        {% elif j.post_status == 1 %}
+            <span style="color: green;">Approved</span>
+        {% else %}
+            <span style="color: red;">Rejected</span>
+        {% endif %}
+    </td>
+
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+
+        </table>
+    </div>
+</main>
+
+
+<!-- ============================================================= -->
+<!--   SECTION 2 : Create Post Form (Initially Hidden)             -->
+<!-- ============================================================= -->
+<div class="create-wrapper" id="createForm">
+
+    <main class="create-main">
+        <h1>Create Job / Internship Post</h1>
+
+        <div class="top-actions">
+    <button class="posts-create-btn" onclick="openPostsPage()">⬅ Preview All Posts</button>
+</div>
+       <form id="post_form" method="POST" action="{% url 'jobpost' %}">
+    {% csrf_token %}
+            <div class="create-grid">
+
+                <div class="create-grid-2">
+                    <label>Title</label>
+                    <input aria-label=" " id="p_title" class="create-input" type="text" placeholder="eg: Software Engineer, Data analytics internship etc...">
+                </div>
+
+                <div>
+                    <label>Type</label>
+                    <select aria-label=" " class="create-select" id="p_type">
+                        <option value="job">Job</option>
+                        <option value="internship">Internship</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label>Company</label>
+                    <input id="p_com" class="create-input" type="text" placeholder="eg: Google, joho etc...">
+                </div>
+
+                <div class="create-grid-2">
+                    <label>Description</label>
+                    <textarea aria-label="" id="p_disc" class="create-textarea"></textarea>
+                </div>
+
+                <div class="create-grid-2">
+                    <label>Application Link</label>
+                    <input id="p_link" type="url" class="create-input" placeholder="https://link...">
+                </div>
+
+                <div>
+                    <label>Posted By</label>
+                    <input id="p_by" class="create-input" type="text" value="{{stdt.id}}" readonly>
+                </div>
+
+                <div>
+                    <label>Expiry Date</label>
+                    <input id="p_exD" class="create-input" type="date">
+                </div>
+
+            </div>
+
+            <div style="margin-top:20px;">
+                <button type="submit" class="create-btn-primary">Publish</button>
+            </div>
+        </form>
+    </main>
+</div>
+
+
+<!-- ============================================================= -->
+<!--   JAVASCRIPT : Page Toggle System                             -->
+<!-- ============================================================= -->
+<script>
+
+
+document.getElementById("post_form").addEventListener("submit", async function (e) {
+    e.preventDefault();
+
+    let data = {
+        title: document.getElementById("p_title").value,
+        type: document.getElementById("p_type").value,
+        company: document.getElementById("p_com").value,
+        description: document.getElementById("p_disc").value,
+        link: document.getElementById("p_link").value,
+        posted_by: document.getElementById("p_by").value,
+        expiry: document.getElementById("p_exD").value
+    };
+
+    let response = await fetch("/jobpost/", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": getCookie("csrftoken"),
+        },
+        body: JSON.stringify(data)
+    });
+
+    let res = await response.json();
+    alert(res.message);
+});
+
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== "") {
+        let cookies = document.cookie.split(";");
+        for (let cookie of cookies) {
+            cookie = cookie.trim();
+            if (cookie.startsWith(name + "=")) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+
+
+function openCreateForm() {
+    document.getElementById("postsPage").style.display = "none";
+    document.getElementById("createForm").style.display = "block";
+}
+
+function openPostsPage() {
+    document.getElementById("createForm").style.display = "none";
+    document.getElementById("postsPage").style.display = "block";
+}
+
+function updateJob(job_id, status) {
+    fetch('/update_job_status/', {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": "{{ csrf_token }}"
+        },
+        body: JSON.stringify({
+            job_id: job_id,
+            status: status
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            alert("Status Updated!");
+            location.reload();
+        } else {
+            alert("Error: " + data.error);
+        }
+    });
+}
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+    const searchInput = document.getElementById("postsearch");
+    const tableRows = document.querySelectorAll("#tablepost tr");
+
+    searchInput.addEventListener("keyup", function () {
+        let filter = this.value.toLowerCase().trim();
+
+        tableRows.forEach(row => {
+            let rowText = row.innerText.toLowerCase();
+
+            if (rowText.includes(filter)) {
+                row.style.display = "";
+            } else {
+                row.style.display = "none";
+            }
+        });
+    });
+
+});
+
+</script>
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alumni Directory</title>
+ <style>
+     /* BASIC RESET */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+.ad-body {
+    font-family: Arial, sans-serif;
+    background: #f8fafc;
+    color: #1e293b;
+}
+
+
+/* MAIN */
+.ad-main { padding: 40px 0; }
+.ad-heading { font-size: 30px; font-weight: bold; }
+.ad-subtext { margin-top: 8px; color: #6b7280; }
+
+/* FILTER BOX */
+.ad-filter-box {
+    background: white;
+    padding: 20px;
+    margin: 30px 0;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+}
+
+.ad-filter-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+}
+
+.ad-col-span-2 { grid-column: span 2; }
+
+.ad-label {
+    font-size: 14px;
+    margin-bottom: 5px;
+    display: block;
+}
+
+.ad-input-icon {
+    position: relative;
+}
+
+.ad-input-icon svg {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+}
+
+.ad-input {
+    width: 100%;
+    padding: 10px 15px 10px 35px;
+    border: 1px solid #aaa;
+    border-radius: 5px;
+}
+
+.ad-select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #aaa;
+    border-radius: 5px;
+}
+
+/* GRID CARDS */
+.ad-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 25px;
+}
+
+.ad-card {
+    background: white;
+    border: 1px solid #ddd;
+    padding: 20px;
+    text-align: center;
+    border-radius: 10px;
+}
+
+.ad-profile-img {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+}
+
+.ad-card-name {
+    font-size: 20px;
+    font-weight: bold;
+    margin-top: 8px;
+}
+
+.ad-batch {
+    color: #3b82f6;
+    margin-top: 5px;
+}
+
+.ad-info {
+    margin-top: 8px;
+    font-size: 14px;
+}
+
+.ad-btn {
+    margin-top: 15px;
+    background: #3b82f6;
+    border: none;
+    width: 100%;
+    color: white;
+    padding: 10px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+
+ </style>
+</head>
+
+<body class="ad-body">
+
+
+    <main class="ad-main">
+        <div class="ad-container">
+            <h2 class="ad-heading">Alumni Directory</h2>
+            <p class="ad-subtext">Search and connect with our talented alumni network.</p>
+
+            <!-- FILTERS -->
+            <div class="ad-filter-box">
+                <div class="ad-filter-grid">
+
+                    <!-- Search -->
+                    <div class="ad-filter-item ad-col-span-2">
+                        <label class="ad-label">Search by name or company</label>
+                        <div class="ad-input-icon">
+                            <svg width="18" height="18" fill="#777" viewBox="0 0 24 24">
+                                <path d="M10 2a8 8 0 105.293 14.293l4.147 4.147 1.414-1.414-4.147-4.147A8 8 0 0010 2z"></path>
+                            </svg>
+                            <input type="text" id="ad-search" class="ad-input" placeholder="e.g. John Doe, TechCorp">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ALUMNI CARDS -->
+           <!-- ALUMNI GRID -->
+<div class="ad-grid">
+
+{% for a in alumni %}
+    <div class="ad-card">
+
+       {% if a.profile %}
+    <img class="ad-profile-img" src="{% url 'profile_photo' a.profile.id %}" alt="">
+{% else %}
+    <img class="ad-profile-img" src="/static/images/default_user.png" alt="">
+{% endif %}
+
+        <h3 class="ad-card-name">{{ a.user.username }}</h3>
+
+        <p class="ad-batch">MCA completed in {{ a.user.passout_Year }}</p>
+
+        <p class="ad-info"><strong>Role:</strong> {{ a.profile.curnt_wrk_role}}</p>
+        <p class="ad-info"><strong>Company:</strong> {{ a.profile.cwc }}</p>
+
+  {% if a.accepted %}
+
+    <button class="ad-btn" style="background:#16a34a;" onclick="alert('Chat feature coming soon!')">
+        💬 Chat Now
+    </button>
+
+{% elif a.requested %}
+
+    <button class="ad-btn" style="background: gray; cursor: not-allowed;">
+        Mentorship Requested
+    </button>
+
+{% else %}
+
+    <a href="{% url 'send_mentorship' a.user.id %}">
+        <button class="ad-btn">
+            Request Mentorship
+        </button>
+    </a>
+{% endif %}
+
+
+
+    </div>
+{% endfor %}
+
+</div>
+
+
+           </div>
+    </main>
+
+<script>
+const search = document.getElementById("ad-search");
+const cards = document.querySelectorAll(".ad-card");
+
+function filterCards() {
+    const s = search.value.toLowerCase();
+
+    cards.forEach(card => {
+        const name = card.querySelector(".ad-card-name").innerText.toLowerCase();
+        const companyEl = card.querySelector(".ad-info:nth-child(3)"); // Assuming 3rd p is company
+        const company = companyEl ? companyEl.innerText.toLowerCase() : "";
+
+        const show = name.includes(s) || company.includes(s);
+        card.style.display = show ? "block" : "none";
+    });
+}
+
+search.addEventListener("input", filterCards);
+</script>
+
+</body>
+</html>

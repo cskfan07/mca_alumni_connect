@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <div class="ac-container">
+
+    <!-- Welcome Card -->
+    <div class="ac-card">
+        <div class="ac-profile-box">
+            {% load static %}
+
+           {% if sprfl and sprfl.id %}
+    <img src="{% url 'profile_photo' sprfl.id %}" alt="profile image">
+            {% else %}
+    <img src="{% static 'images/default_profile.png' %}" alt="default profile image">
+            {% endif %}
+
+            <div>
+                <h2>Welcome back,  {{stdt.username}}!</h2>
+                <p>Ready to connect with the alumni network?</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Grid -->
+    <div class="ac-grid">
+
+        <!-- LEFT COLUMN -->
+        <div>
+            <!-- Quick Actions -->
+            <h3 class="ac-section-title">explore</h3>
+            <div class="ac-actions-grid">
+
+                <a class="ac-action-card" >
+                    <span class="material-icons ac-action-icon"></span>
+                    <span>Find Alumni</span>
+                </a>
+
+                <a class="ac-action-card"  >
+                    <span class="material-icons ac-action-icon"></span>
+                    <span>request mentorship</span>
+                </a>
+
+                <a class="ac-action-card"  >
+                    <span class="material-icons ac-action-icon"></span>
+                    <span>Job / insternship </span>
+                </a>
+
+            </div>
+
+            <br>
+            <h3 class="ac-section-title">Recent Updates</h3><br> no update..
+
+        </div>
+
+        <!-- RIGHT SIDEBAR -->
+        <div class="ac-sidebar">
+            <div class="ac-side-profile">
+                {% load static %}
+
+           {% if sprfl and sprfl.id %}
+    <img src="{% url 'profile_photo' sprfl.id %}" alt="profile image">
+            {% else %}
+    <img src="{% static 'images/default_profile.png' %}" alt="default profile image">
+            {% endif %}
+                <p><b>{{stdt.username}}</b></p>
+                <p style="color:#94a3b8;">{{  stdt.email }}</p>
+                <p style="color:#94a3b8;">persuing till {{ stdt.passout_Year }}</p>
+            </div>
+
+
+
+            <a class="ac-edit-btn">
+                <span class="material-icons" style="vertical-align: middle;">edit</span>
+                complete your Profile
+            </a>
+        </div>
+
+    </div>
+</div>
+</body>
+</html>

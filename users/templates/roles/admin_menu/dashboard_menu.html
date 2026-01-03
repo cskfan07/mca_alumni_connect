@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <style>
+    :root {
+        --primary: #135bec;
+
+        --bg-light: #f6f6f8;
+        --bg-dark: #101622;
+
+        --card-light: #ffffff;
+        --card-dark: #182131;
+
+        --border-light: #e0e6f1;
+        --border-dark: #2a364d;
+
+        --text-light: #0d121b;
+        --text-dark: #ffffff;
+
+        --text-muted-light: #4c669a;
+        --text-muted-dark: #a0b3d7;
+    }
+
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: var(--bg-light);
+        color: var(--text-light);
+        display: flex;
+    }
+
+    /* Sidebar */
+    .sidebar {
+        width: 250px;
+        background: var(--card-light);
+        border-right: 1px solid var(--border-light);
+        height: 100vh;
+        position: fixed;
+        left: 0;
+        top: 0;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .brand {
+        padding: 20px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-weight: bold;
+    }
+
+    .menu a {
+        padding: 12px 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        text-decoration: none;
+        color: var(--text-light);
+        font-size: 14px;
+    }
+
+    .menu a.active {
+        background: rgba(19,91,236,0.18);
+        color: var(--primary);
+        font-weight: bold;
+    }
+
+    .menu a:hover {
+        background: rgba(19,91,236,0.1);
+    }
+
+    .user-box {
+        margin-top: auto;
+        padding: 15px;
+        border-top: 1px solid var(--border-light);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    /* Main Content */
+    .main {
+        margin-left: 250px;
+        padding: 20px;
+        width: calc(100% - 250px);
+    }
+
+    .topbar {
+        background: var(--card-light);
+        padding: 15px 20px;
+        border-bottom: 1px solid var(--border-light);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: sticky;
+        top: 0;
+    }
+
+    .stats {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 15px;
+        margin-top: 20px;
+    }
+
+    .card {
+        background: var(--card-light);
+        border: 1px solid var(--border-light);
+        padding: 20px;
+        border-radius: 8px;
+    }
+
+    .card h3 {
+        font-size: 14px;
+        color: var(--text-muted-light);
+        margin: 0;
+    }
+
+    .card p {
+        font-size: 26px;
+        font-weight: bold;
+        margin: 5px 0 0 0;
+    }
+
+    /* Table Section */
+    .section-title {
+        margin: 35px 0 10px 0;
+        font-size: 18px;
+        font-weight: bold;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        background: var(--card-light);
+        border: 1px solid var(--border-light);
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    th, td {
+        padding: 12px 14px;
+        font-size: 14px;
+        border-bottom: 1px solid var(--border-light);
+    }
+
+    th {
+        background: var(--bg-light);
+        text-transform: uppercase;
+        font-size: 12px;
+        color: var(--text-muted-light);
+    }
+
+    .badge-pending {
+        background: #fff3cd;
+        color: #d39e00;
+        padding: 4px 10px;
+        font-size: 12px;
+        border-radius: 20px;
+    }
+
+    .btn {
+        border: none;
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-size: 12px;
+        cursor: pointer;
+    }
+
+    .approve { background: #d4edda; color: #155724; }
+    .reject { background: #f8d7da; color: #721c24; }
+
+    /* Make main content scrollable on smaller screens */
+.main {
+    padding: 20px;
+    width: calc(100% - 250px);
+}
+
+/* Table responsive */
+table {
+
+    width: 100%;
+    overflow-x: auto;
+}
+
+/* Responsive stats grid */
+@media (max-width: 1200px) {
+    .stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    /* Sidebar collapses */
+    .sidebar {
+        width: 200px;
+    }
+
+    .main {
+        margin-left: 200px;
+        width: calc(100% - 200px);
+    }
+
+    .stats {
+        grid-template-columns: 1fr;
+    }
+
+    .topbar input {
+        width: 100%;
+        margin-top: 10px;
+    }
+
+    .menu a {
+        font-size: 13px;
+        padding: 10px 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .sidebar {
+        position: relative;
+        width: 100%;
+        height: auto;
+        border-right: none;
+    }
+
+    .main {
+        margin-left: 0;
+        width: 100%;
+        padding: 10px;
+    }
+
+    .topbar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .menu a {
+        font-size: 12px;
+        padding: 8px 12px;
+    }
+
+    .stats .card p {
+        font-size: 22px;
+    }
+
+    table th, table td {
+        padding: 8px 10px;
+        font-size: 12px;
+    }
+
+}
+
+    .hide{
+    display:none;
+    }
+    .active{
+    display:block;
+    }
+
+
+</style>
+</head>
+<body>
+
+
+<div class="dashboard">
+    <div class="topbar">
+        <h2>{{logged_user.username }}</h2>
+
+    </div>
+
+    <!-- Stats -->
+    <div class="stats">
+        <div class="card"><h3>Total Users</h3><p>{{total_user}}</p>
+<canvas id="userChart" width="200" height="200"></canvas>
+
+<!-- Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</div>
+
+
+
+
+        <div class="card"><h3> Total Verified User & type </h3><p> {{ verified_user }}</p>
+        <canvas id="usertype" width="200" height="200"></canvas>
+
+        </div>
+        <div class="card"><h3>Registered User trend date wise</h3><p></p>
+        <canvas id="trendgraph" width="200" height="200"></canvas>
+        </div>
+     <div class="card">
+    <h3>Posts Created Per Day</h3>
+    <canvas id="postTrend"></canvas>
+</div>
+    </div>
+
+    <!-- Table -->
+    <div class="section-title">Pending Registrations</div>
+
+<table>
+    <thead>
+        <tr>
+
+            <th>Username</th>
+              <th>Roll no.</th>
+              <th>College registration no.</th>
+            <th>Email</th>
+             <th>Role</th>
+            <th>Passout_year</th>
+
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for user in pending_users %}
+        <tr id="user-{{ user.id }}">
+            <td>{{ user.username }}</td>
+            <td>{{ user.roll_no }}</td>
+            <td>{{ user.reg_no }}</td>
+            <td>{{ user.email }}</td>
+              <td>{{ user.role}}</td>
+            <td>{{ user.passout_Year }}</td>
+            <td>
+                <span class="badge-pending">{% if user.status %}Approved{% else %}Pending{% endif %}</span>
+            </td>
+            <td>
+                <button class="btn approve" onclick="updateStatus('{{ user.id }}', 1)">Approve</button>
+                <button class="btn reject" onclick="updateStatus('{{ user.id }}', -1)">Reject</button>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+ </div>
+
+</div>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+      const postLabels = {{ post_days|safe }};
+    const postData = {{ post_counts|safe }};
+     const labels = {{ days|safe }};
+  const studentData = {{ student_counts|safe }};
+  const alumniData = {{ alumni_counts|safe }};
+  const adminData = {{ admin_counts|safe }};
+  const ctx3 = document.getElementById('trendgraph').getContext('2d');
+function updateStatus(userId, approve) {
+     approve = Number(approve);
+    fetch('/roles/update_user_status/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': '{{ csrf_token }}'
+        },
+        body: JSON.stringify({ user_id: userId, approve: approve })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+
+            const row = document.getElementById('user-' + userId);
+            const badge = row.querySelector('td span');
+
+            if (approve === 1) {
+                badge.textContent = "Approved";
+                badge.style.background = "#d4edda";
+                badge.style.color = "#155724";
+
+            } else if (approve === -1) {
+                badge.textContent = "Rejected";
+                badge.style.background = "#f8d7da";
+                badge.style.color = "#721c24";
+
+            } else if (approve === 0) {
+                badge.textContent = "Pending";
+                badge.style.background = "#fff3cd";
+                badge.style.color = "#856404";
+            }
+
+            // disable buttons after update
+            row.querySelector('.approve').disabled = true;
+            row.querySelector('.reject').disabled = true;
+
+        } else {
+            alert(data.error);
+        }
+    })
+}
+
+
+
+    const ctx = document.getElementById('userChart');
+
+    new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: [  'Not verified Users', 'Verified Users', 'Rejected Users'],
+            datasets: [{
+                data: [
+
+                    {{ pending_count }},
+                    {{ verified_user }},
+                    {{ reject_user }}
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+
+const ctx2 = document.getElementById('usertype').getContext('2d');
+new Chart(ctx2, {
+    type: 'bar',
+    data: {
+        labels: ['Alumni', 'Student', 'Admin'],
+        datasets: [{
+            label: 'User Count',
+            data: [
+                {{ no_alm }},
+                {{ no_std }},
+                {{ no_adm }}
+            ],
+            backgroundColor: ['#4CAF50', '#2196F3', '#FF9800'],
+            borderWidth: 1
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                display: false
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+    }
+});
+
+
+
+new Chart(ctx3, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [
+                {
+                    label: "Students Registered",
+                    data: studentData,
+                    borderWidth: 2,
+                    tension: 0.3
+                },
+                {
+                    label: "Alumni Registered",
+                    data: alumniData,
+                    borderWidth: 2,
+                    tension: 0.3
+                },
+                {
+                    label: "Admin Registered",
+                    data: adminData,
+                    borderWidth: 2,
+                    tension: 0.3
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: { beginAtZero: true },
+                x: {
+                    ticks: {
+                        maxRotation: 90,
+                        minRotation: 45
+                    }
+                }
+            }
+        }
+    });
+const ctx4 = document.getElementById('postTrend').getContext('2d');
+
+    new Chart(ctx4, {
+        type: 'line',
+        data: {
+            labels: postLabels,
+            datasets: [{
+                label: 'Posts per Day',
+                data: postData,
+                borderWidth: 2,
+                tension: 0.3,
+                fill: false
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1
+                    }
+                }
+            }
+        }
+    });
+
+
+</script>
+
+</body>
+</html>

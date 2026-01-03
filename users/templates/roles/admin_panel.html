@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MCA Alumni Connect - Admin Dashboard</title>
+
+</head>
+
+<body>
+
+<!-- Sidebar -->
+<div class="sidebar">
+    <div class="brand">🎓 MCA Alumni Connect<br><small>Admin Panel</small></div>
+
+    <div class="menu">
+<a href="#" onclick="showDiv('dash_menu')" >📊 Dashboard</a>
+<a href="#" onclick="showDiv('user_menu')" >👥 User Management</a>
+<a href="#" onclick="showDiv('chat_menu')" >📝 Chat monitoring</a>
+<a href="#" onclick="showDiv('post_menu')" >📝 Posts Manage</a>
+     <a href="#" onclick="showDiv('f_e')" >📝 Feedback & Enquiry </a>
+<a href="#"  onclick="showDiv('profile_menu')">⚙ My Profile</a>
+
+
+
+    </div>
+
+    <div class="user-box">
+        <div>
+            <strong>{{logged_user.username }}</strong><br>
+            <a href="/logout/">Logout</a>
+        </div>
+    </div>
+</div>
+
+<!-- Main Content -->
+<div class="main" >
+     <div id="page-container" >
+         <!-- Default page -->
+         <div id="user_menu" class="hide">
+             {% include 'roles/admin_menu/user_menu.html' %}
+         </div>
+         <div id="dash_menu" class="hide active">
+             {% include 'roles/admin_menu/dashboard_menu.html' %}
+         </div>
+          <div id="chat_menu" class="hide">
+             {% include 'roles/admin_menu/chat_menu.html' %}
+         </div>
+          <div id="post_menu" class="hide">
+             {% include 'roles/admin_menu/post_menu.html' %}
+         </div>
+          <div id="profile_menu" class="hide">
+             {% include 'roles/admin_menu/profile_menu.html' %}
+         </div>
+         <div id="f_e" class="hide">
+             {% include 'roles/admin_menu/f_enq.html' %}
+         </div>
+
+    </div>
+</div>
+<script>
+  function showDiv(divId) {
+        const divs = document.querySelectorAll('.hide');
+        divs.forEach(div => {
+            div.style.display = 'none';
+        });
+
+        // Show the clicked div
+        document.getElementById(divId).style.display = 'block';
+    }
+</script>
+
+</body>
+
+</html>

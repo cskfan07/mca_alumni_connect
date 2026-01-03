@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Profile</title>
+
+<style>
+/* ===========================
+   GLOBAL
+=========================== */
+:root {
+    --bg: #f3f4f6;
+    --primary: #3B82F6;
+    --text: #111827;
+    --subtext: #6b7280;
+    --card-bg: #fff;
+    --border: #ddd;
+}
+
+body {
+    margin: 0;
+    font-family: "Inter", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    padding: 20px;
+}
+
+.admin-profile-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+}
+
+/* ===========================
+   EDIT PROFILE CARD
+=========================== */
+.edit-card {
+    background: var(--card-bg);
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    flex: 1;
+    min-width: 330px;
+    overflow: hidden;
+}
+
+.edit-header,
+.edit-body,
+.edit-footer {
+    padding: 20px;
+    border-bottom: 1px solid var(--border);
+}
+
+.edit-header h2 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.edit-header p {
+    margin-top: 6px;
+    font-size: 14px;
+    color: var(--subtext);
+}
+
+/* Avatar */
+.edit-avatar-box {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.edit-avatar-box img {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.edit-avatar-btn {
+    padding: 8px 14px;
+    border-radius: 6px;
+    background: #eee;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.edit-avatar-btn:hover {
+    background: #ddd;
+}
+
+/* Form */
+.edit-form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+}
+
+.edit-form-control {
+    display: flex;
+    flex-direction: column;
+}
+
+.edit-form-control label {
+    font-size: 14px;
+    margin-bottom: 6px;
+}
+
+.edit-form-control input,
+.edit-form-control textarea {
+    padding: 9px;
+    border-radius: 6px;
+    border: 1px solid #aaa;
+    font-size: 14px;
+}
+
+.edit-form-control input:disabled {
+    background: #eee;
+}
+
+textarea {
+    resize: none;
+}
+
+/* Footer */
+.edit-footer {
+    display: flex;
+    justify-content: flex-end;
+    border-top: 1px solid var(--border);
+}
+
+#saved-msg {
+    color: green;
+    margin-right: 15px;
+    opacity: 0;
+    transition: 0.4s;
+}
+
+.save-btn {
+    padding: 10px 16px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.save-btn:hover {
+    background: #2563eb;
+}
+
+/* ===========================
+   PROFILE PREVIEW
+=========================== */
+.preview-card {
+    background: var(--card-bg);
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    width: 380px;
+}
+
+.preview-header {
+    padding: 20px;
+    border-bottom: 1px solid var(--border);
+}
+
+.preview-header h2 {
+    margin: 0;
+    font-size: 20px;
+}
+
+.preview-pic {
+    width: 115px;
+    height: 115px;
+    border-radius: 50%;
+    border: 4px solid var(--card-bg);
+    object-fit: cover;
+    position: relative;
+
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.preview-info {
+    text-align: center;
+
+    padding: 10px 20px;
+}
+
+.preview-info .name {
+    font-size: 1.3rem;
+    font-weight: 700;
+}
+
+.preview-info .subtitle {
+    margin-top: 8px;
+    color: var(--subtext);
+}
+
+.preview-section {
+    padding: 20px;
+}
+
+.preview-section-title {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--subtext);
+}
+
+.preview-section p {
+    margin-top: 10px;
+    font-size: 0.92rem;
+}
+
+.preview-divider {
+    height: 1px;
+    background: var(--border);
+    margin: 10px 0;
+}
+
+.preview-contact-item {
+    margin-top: 10px;
+}
+
+.preview-link {
+    color: var(--primary);
+    text-decoration: none;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .edit-form-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+
+</head>
+<body>
+
+<div class="admin-profile-container">
+
+    <!-- EDIT PROFILE CARD -->
+    <div class="edit-card">
+
+        <div class="edit-header">
+            <h2>Profile Information</h2>
+            <p>Update your personal information and email address.</p>
+        </div>
+
+        <form id="profileForm" action="{% url 'save_profile' %}" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div class="edit-body">
+
+                <div class="edit-avatar-box">
+                    {% load static %}
+
+           {% if sprfl and sprfl.id %}
+    <img src="{% url 'profile_photo' sprfl.id %}" alt="profile image">
+            {% else %}
+    <img src="{% static 'images/default_profile.png' %}" alt="default profile image">
+            {% endif %}
+                    <button type="button" class="edit-avatar-btn" onclick="document.getElementById('photoInput').click()">Change Photo</button>
+                    <input type="file" id="photoInput" name="photo" accept="image/*" style="display:none;">
+                </div>
+
+                <div class="edit-form-grid">
+
+                    <div class="edit-form-control">
+                        <label>Current Working Role</label>
+                        <input name="cwr" type="text" value="{{sprfl.curnt_wrk_role}}">
+                    </div>
+
+                    <div class="edit-form-control">
+                        <label>Date of Birth</label>
+                        <input name="dob" type="date" value="{{sprfl.dob}}">
+                    </div>
+
+                    <div class="edit-form-control">
+                        <label>Age</label>
+                        <input name="age" type="number" value="{{sprfl.age}}" readonly>
+                    </div>
+
+                    <div class="edit-form-control">
+                        <label>Skills</label>
+                        <input name="skill" type="text" value="{{sprfl.skill}}">
+                    </div>
+
+                    <div class="edit-form-control">
+                        <label>Current Company</label>
+                        <input name="cwc" type="text" value="{{sprfl.cwc}}">
+                    </div>
+
+                    <div class="edit-form-control">
+                        <label>Location</label>
+                        <input name="loc" type="text" value="{{sprfl.loc}}">
+                    </div>
+
+                    <div class="edit-form-control">
+                        <label>Phone</label>
+                        <input name="ph" type="text" value="{{sprfl.ph}}">
+                    </div>
+
+                    <div class="edit-form-control" style="grid-column:span 2;">
+                        <label>Total Work Experience (Years)</label>
+                        <input name="wexp" type="number" value="{{sprfl.wexp}}">
+                    </div>
+
+                    <div class="edit-form-control" style="grid-column:span 2;">
+                        <label>LinkedIn Link</label>
+                        <input name="llink" type="text" value="{{sprfl.llink}}">
+                    </div>
+
+                    <div class="edit-form-control" style="grid-column:span 2;">
+                        <label>Bio</label>
+                        <textarea name="bio" rows="3">{{sprfl.bio}}</textarea>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="edit-footer">
+                <span id="saved-msg">Saved!</span>
+                <button type="submit" class="save-btn">Save</button>
+            </div>
+
+        </form>
+    </div>
+
+    <!-- PROFILE PREVIEW -->
+    <div class="preview-card">
+
+        <div class="preview-header">
+            <h2>My Profile</h2>
+            <p>This is how your profile looks to others.</p>
+        </div>
+
+       {% if sprfl and sprfl.id %}
+    <img class="preview-pic" src="{% url 'profile_photo' sprfl.id %}">
+{% else %}
+    <img class="preview-pic" src="{% static 'images/default_profile.png' %}" alt="image">
+{% endif %}
+
+        <div class="preview-info">
+            <h1 class="name">{{stdt.username}} - {{stdt.role}}</h1>
+            <p class="subtitle">{{sprfl.curnt_wrk_role}} | MCA ({{stdt.passout_Year}})</p>
+            <p class="location">📍 {{sprfl.loc}}</p>
+        </div>
+
+        <div class="preview-divider"></div>
+
+        <div class="preview-section">
+            <h3 class="preview-section-title">Bio</h3>
+            <p>{{sprfl.bio}}</p>
+        </div>
+
+        <div class="preview-divider"></div>
+
+        <div class="preview-section">
+            <h3 class="preview-section-title">Academic Details</h3>
+            <p>Skills: {{sprfl.skill}}</p>
+            <p>Work Experience: {{sprfl.wexp}} years</p>
+        </div>
+
+        <div class="preview-divider"></div>
+
+        <div class="preview-section">
+            <h3 class="preview-section-title">Contact Info</h3>
+            <p class="preview-contact-item">📧 {{stdt.email}}</p>
+            <p class="preview-contact-item">📞 {{sprfl.ph}}</p>
+            <p class="preview-contact-item">
+                🔗 <a class="preview-link" href="{{sprfl.llink}}">LinkedIn Profile</a>
+            </p>
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+
+// image preview
+document.getElementById("photoInput").addEventListener("change", function(e){
+    let file = e.target.files[0];
+    document.getElementById("previewImg").src = URL.createObjectURL(file);
+});
+    document.querySelector("input[name='dob']").addEventListener("change", function() {
+    let dob = new Date(this.value);
+    let today = new Date();
+    let age = today.getFullYear() - dob.getFullYear();
+    document.querySelector("input[name='age']").value = age;
+});
+    document.getElementById("profileForm").addEventListener("submit", function(e) {
+
+    let msg = document.getElementById("saved-msg");
+    msg.style.opacity = "1";
+    setTimeout(() => msg.style.opacity = "0", 2000);
+});
+</script>
+
+</body>
+</html>

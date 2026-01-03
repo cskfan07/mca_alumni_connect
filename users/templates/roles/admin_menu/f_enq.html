@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Feedback & Enquiry Management</title>
+
+<style>
+
+/* ================================
+   GLOBAL RESET + UNIQUE NAMESPACE
+==================================*/
+
+.fbq-wrapper {
+    font-family: "Inter", sans-serif;
+    display: flex;
+    height: 100vh;
+    margin: 0;
+    background: #f3f4f6;
+    color: #333;
+}
+
+
+/* =============================
+   MAIN CONTENT
+============================= */
+
+.fbq-main {
+    flex: 1;
+    padding: 24px;
+    overflow-y: auto;
+}
+
+.fbq-title {
+    font-size: 26px;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+
+/* =============================
+   CARD
+============================= */
+
+.fbq-card {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.fbq-card-header {
+    padding: 20px;
+    border-bottom: 1px solid #ddd;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+.fbq-search-box input {
+    padding: 8px 12px;
+    width: 200px;
+    border: 1px solid #bbb;
+    border-radius: 6px;
+}
+
+/* =============================
+   TABLE
+============================= */
+
+.fbq-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.fbq-table thead {
+    background: #f4f4f4;
+    text-transform: uppercase;
+    font-size: 12px;
+    text-align: match-parent;
+}
+
+.fbq-table th,
+.fbq-table td {
+    padding: 14px;
+    border-bottom: 1px solid #eee;
+}
+
+.fbq-row:hover {
+    background: #f9f9f9;
+}
+
+/* Status Badges */
+.fbq-status {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.fbq-open { background: #fee2e2; color: #b91c1c; }
+.fbq-resolved { background: #d1fae5; color: #065f46; }
+.fbq-pending { background: #fef3c7; color: #92400e; }
+
+/* =============================
+   FOOTER PAGINATION
+============================= */
+
+.fbq-footer {
+    padding: 16px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.fbq-pagination a {
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    margin-left: 4px;
+    text-decoration: none;
+    color: #444;
+    border-radius: 4px;
+}
+
+.fbq-pagination a:hover {
+    background: #eee;
+}
+
+</style>
+
+</head>
+<body>
+
+<div class="fbq-wrapper">
+
+    <!-- MAIN CONTENT -->
+    <main class="fbq-main">
+        <h1 class="fbq-title">Feedback & Enquiry Management</h1>
+
+        <div class="fbq-card">
+
+            <!-- CARD HEADER -->
+            <div class="fbq-card-header">
+                <h2>All Submissions</h2>
+
+                <div class="fbq-search-box">
+                    <input id="fbqSearchInput" type="text" placeholder="Search...">
+                </div>
+            </div>
+
+            <!-- TABLE -->
+            <div class="fbq-table-wrapper">
+                <table class="fbq-table">
+
+                    <thead>
+                        <tr>
+                            <th>Sender</th>
+                            <th>Email</th>
+                            <th>Message</th>
+                            <th>Date&Time</th>
+
+                        </tr>
+                    </thead>
+
+                    <tbody id="fbqTableBody">
+
+                        {% for e in enq_data %}
+                          <tr>
+                               <td>{{ e.name }}</td>
+                                <td>{{ e.email }}</td>
+                                    <td>{{ e.message }}</td>
+                                     <td>{{ e.time }}</td>
+                              </tr>
+                            {% endfor %}
+
+                    </tbody>
+
+                </table>
+            </div>
+
+            <!-- FOOTER -->
+            <div class="fbq-footer">
+                <span>Showing 1 to {{no_fq}}</span>
+            </div>
+
+        </div>
+    </main>
+
+</div>
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const searchInput = document.getElementById("fbqSearchInput");
+    const tableRows = document.querySelectorAll("#fbqTableBody tr");
+
+    searchInput.addEventListener("keyup", function () {
+        let filter = this.value.toLowerCase().trim();
+
+        tableRows.forEach(row => {
+            let rowText = row.innerText.toLowerCase();
+
+            if (rowText.includes(filter)) {
+                row.style.display = "";
+            } else {
+                row.style.display = "none";
+            }
+        });
+    });
+
+});
+</script>
+
+</body>
+</html>

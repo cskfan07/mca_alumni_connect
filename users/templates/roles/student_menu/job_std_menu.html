@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Job/Internship Board - Alumni Connect</title>
+  <style>
+     /* Root */
+body, html {
+  margin: 0;
+  padding: 0;
+  font-family: 'Manrope', sans-serif;
+  background: #f6f6f8;
+  color: #1f2937;
+}
+
+.jb-root { max-width: 1400px; margin: 0 auto; }
+
+
+/* Main */
+.jb-main { padding: 20px; }
+.jb-main-title { font-size: 2rem; font-weight: 800; margin-bottom: 20px; }
+.jb-content { display: flex; gap: 20px; }
+
+/* Sidebar */
+.jb-sidebar {
+  flex: 1;
+  background: #fff;
+  padding: 15px;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  height: fit-content;
+}
+
+/* Filters */
+.jb-filters details { margin-bottom: 10px; }
+.jb-filters summary { font-weight: 600; cursor: pointer; margin-bottom: 5px; }
+.jb-filters label { display: block; margin: 3px 0; }
+
+/* Listings */
+.jb-listings { flex: 3; display: flex; flex-direction: column; gap: 15px; }
+.jb-search input { width: 100%; padding: 10px; border-radius: 10px; border: 1px solid #e5e7eb; margin-bottom: 15px; }
+
+.jb-card { display: flex; justify-content: space-between; background: #fff; padding: 15px; border-radius: 10px; border: 1px solid #e5e7eb; flex-wrap: wrap; }
+.jb-card-left { display: flex; gap: 15px; flex: 1 1 60%; min-width: 200px; }
+.jb-card-logo { width: 60px; height: 60px; background-size: cover; background-position: center; border-radius: 10px; }
+.jb-card-info { display: flex; flex-direction: column; gap: 5px; }
+.jb-card-title { font-weight: 700; font-size: 1.1rem; }
+.jb-card-subtitle { font-size: 0.9rem; color: #6b7280; }
+.jb-card-tags { display: flex; gap: 5px; flex-wrap: wrap; }
+.jb-tag { font-size: 0.75rem; padding: 2px 5px; border-radius: 5px; font-weight: 600; }
+.jb-tag-fulltime { background: #dbeafe; color: #1e3a8a; }
+.jb-tag-onsite { background: #f3f4f6; color: #374151; }
+
+.jb-card-right { display: flex; flex-direction: column; justify-content: space-between; align-items: flex-end; gap: 5px; flex: 1 1 30%; min-width: 120px; }
+.jb-posted { font-size: 0.75rem; color: #6b7280; }
+.jb-btn-view { background: #eff6ff; color: #135bec; padding: 6px 12px; border-radius: 5px; }
+
+/* Responsive Media Queries */
+@media (max-width: 1024px) {
+  .jb-content { flex-direction: column; }
+  .jb-sidebar { width: 100%; margin-bottom: 20px; }
+  .jb-card-right { align-items: flex-start; margin-top: 10px; }
+}
+
+@media (max-width: 640px) {
+  .jb-header { flex-direction: column; align-items: flex-start; gap: 10px; }
+  .jb-header-nav { flex-wrap: wrap; }
+  .jb-header-actions { flex-wrap: wrap; }
+  .jb-main-title { font-size: 1.5rem; }
+  .jb-card { flex-direction: column; }
+  .jb-card-left { flex: 1 1 100%; min-width: auto; }
+  .jb-card-right { flex: 1 1 100%; align-items: flex-start; margin-top: 10px; }
+}
+
+</style>
+</head>
+<body>
+  <div class="jb-root">
+
+
+    <!-- Main Content -->
+    <main class="jb-main">
+      <h1 class="jb-main-title">Job & Internship Board</h1>
+      <div class="jb-content">
+        <!-- Sidebar -->
+        <aside class="jb-sidebar">
+          <h3>Filters</h3>
+          <div class="jb-filters">
+            <details open>
+              <summary>Job Type</summary>
+             <label><input type="checkbox" class="type-filter" value="job" checked> Job</label>
+<label><input type="checkbox" class="type-filter" value="internship" checked> Internship</label>
+
+            </details>
+          </div>
+          <button class="jb-btn jb-btn-primary">Apply Filters</button>
+          <button class="jb-btn jb-btn-clear">Clear All</button>
+        </aside>
+
+        <!-- Job Listings -->
+        <section class="jb-listings">
+          <div class="jb-search">
+            <input type="text" id="jobSearch" placeholder="Search by title, company, or keyword">
+          </div>
+
+          <!-- Example Job Card -->
+            {% for a in jobi %}
+          <div class="jb-card"  >
+            <div class="jb-card-left">
+              <div class="jb-card-logo" style="background-image:url('https://lh3.googleusercontent.com/aida-public/AB6AXuD3XuQA26Wg_-DPpMWZvyut_Ckv570UfRBeuc4gYAjzBw0JgHLJU201gRhH0OuXWDAtveNwuUONCf190CiHpt6HUZ7Yy0i1M-IBoqRyAs1fAywQSzhsSTixc2iGwNnoUJq_m4iGytgi0iRntl8vL_1fy2Go6LCtz1HjChPCpfBuvr1vn80jn5BC2ncc7N1mUwzEN6w3tki55VZI0vnw5MedDvTjxy86pU2_G-3xapOfgcW0oTH5W0R9WYQ0YPBNzlelODnKjgmgzRM');"></div>
+              <div class="jb-card-info">
+                <p class="jb-card-title">{{a.title}}</p>
+                <p class="jb-card-subtitle">{{ a.description }}</p>
+                <div class="jb-card-tags">
+                  <span class="jb-tag jb-tag-fulltime">{{a.type}}</span>
+                  <span class="jb-tag jb-tag-onsite">posted by {{a.posted_by}} - {{a.role}}</span>
+                </div>
+              </div>
+            </div>
+            <div class="jb-card-right">
+              <p class="jb-posted"> valid till: {{a.expiry}}</p>
+                <a href="{{a.link}}" target="_blank" ><button class="jb-btn jb-btn-view" >apply link </button></a>
+            </div>
+          </div>{% endfor %}
+
+          <!-- Duplicate Job Cards as needed -->
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <script >
+    document.getElementById("jobSearch").addEventListener("keyup", function () {
+    let input = this.value.toLowerCase();
+    let cards = document.querySelectorAll(".jb-card");
+
+    cards.forEach(card => {
+
+        let text = card.innerText.toLowerCase();
+
+        if (text.includes(input)) {
+            card.style.display = "flex";  // Show
+        } else {
+            card.style.display = "none";  // Hide
+        }
+    });
+});
+      function applyFilters() {
+    const selectedTypes = Array.from(document.querySelectorAll(".type-filter:checked"))
+                               .map(cb => cb.value.toLowerCase());
+
+    const cards = document.querySelectorAll(".jb-card");
+
+    cards.forEach(card => {
+        const cardType = card.querySelector(".jb-tag").innerText.toLowerCase();
+
+        if (selectedTypes.includes(cardType)) {
+            card.style.display = "flex";
+        } else {
+            card.style.display = "none";
+        }
+    });
+}
+
+document.querySelector(".jb-btn-primary").addEventListener("click", applyFilters);
+
+// CLEAR ALL
+document.querySelector(".jb-btn-clear").addEventListener("click", () => {
+    // Uncheck all checkboxes
+    document.querySelectorAll(".type-filter").forEach(cb => cb.checked = false);
+
+    // Show all job cards
+    document.querySelectorAll(".jb-card").forEach(card => {
+        card.style.display = "flex";
+    });
+});
+
+  </script>
+</body>
+</html>
