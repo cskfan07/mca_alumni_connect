@@ -1,0 +1,40 @@
+# Python cache
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual environment
+.venv/
+env/
+venv/
+
+# Django stuff
+*.sqlite3
+*.log
+db.sqlite3
+media/
+staticfiles/
+
+# PyCharm
+.idea/
+*.iml
+
+# Environment variables
+.env
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Byte-compiled / optimized / DLL files
+*.pyc
+*.pyo
+*.pyd
+
+# Coverage / test reports
+htmlcov/
+.coverage
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
