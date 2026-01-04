@@ -23,22 +23,10 @@ urlpatterns = [
     path("send-mentorship/<str:alumni_id>/", views.send_mentorship_request, name="send_mentorship"),
     path("roles/alumni_dash/", views.alumni_dash, name="alumni_dash"),
     path("roles/alumni/<str:page>/", views.load_alumni_page),
-    path(
-        "profile-photo/<str:profile_id>/",
-        views.serve_profile_photo,
-        name="serve_profile_photo"
-        ),
-    path(
-    "update-mentorship-status/",
-    views.update_mentorship_status,
-    name="update_mentorship_status"
-),
-path(
-    "student/chat/<str:mentorship_id>/",
-    views.student_chat,
-    name="student_chat"
-),
+    path("profile-photo/<str:profile_id>/",views.serve_profile_photo,name="serve_profile_photo"),
+    path( "update-mentorship-status/",views.update_mentorship_status,name="update_mentorship_status"),
+path( "student/chat/<str:mentorship_id>/",views.student_chat,name="student_chat"),
 path("student/chat/<str:mentorship_id>/", views.private_chat, name="private_chat"),
 path("student/chat/<str:mentorship_id>/send/", views.send_private_message, name="send_private_message"),
-path('verify-email/<str:email>:<str:token>/', views.verify_email, name='verify_email')
+path('verify-email/<str:email>/<str:token>/',views.verify_email,name='verify_email'),
 ]
