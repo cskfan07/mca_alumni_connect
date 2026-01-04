@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 # from django.http import JsonResponse
-
+from users.mongo import init_mongo
 from django.contrib.auth.hashers import check_password, make_password
 from functools import wraps
 from datetime import datetime
@@ -37,6 +37,7 @@ def login_required_custom(view_func):
 # =============================
 @csrf_exempt
 def register_user(request):
+    init_mongo()
     if request.method == 'GET':
         # agar user browser se GET request bheje (register page open kare)
         return render(request, 'register.html')  # return a template
@@ -93,6 +94,7 @@ def register_user(request):
 
 
 def verify_email(request, email, token):
+    init_mongo()
     user = User.objects(email=email, email_token=token).first()
     if not user:
         return HttpResponse("Invalid verification link")
@@ -106,6 +108,7 @@ def verify_email(request, email, token):
 # =============================
 @csrf_exempt
 def login_user(request):
+    init_mongo()
     if request.method == 'GET':
         return render(request, 'login.html')
 
@@ -159,6 +162,7 @@ def login_user(request):
 # Logout User
 # =============================
 def logout_user(request):
+    init_mongo()
     user_id = request.session.get("user_id")
 
     if user_id:
@@ -174,6 +178,7 @@ def logout_user(request):
 # =============================
 @login_required_custom
 def dashboard(request):
+    init_mongo()
     role = request.session.get("role")
 
     if role == "admin":
@@ -190,6 +195,7 @@ def dashboard(request):
 # =============================
 @login_required_custom
 def admin_panel(request):
+    init_mongo()
     if request.session.get('role') != 'admin':
         return redirect('/dashboard/')
 
@@ -317,6 +323,7 @@ def admin_panel(request):
 @login_required_custom
 @csrf_exempt
 def update_user_status(request):
+    init_mongo()
     # Only admin can do this
     if request.session.get('role') != 'admin':
         return JsonResponse({'error': 'Unauthorized'}, status=403)
@@ -345,6 +352,7 @@ def update_user_status(request):
  # /////////////////////////////////////////////
 @csrf_exempt
 def enq(request):
+    init_mongo()
     if request.method == 'POST':
         data = json.loads(request.body)
         print("📌 Received Data:", data)
@@ -380,6 +388,7 @@ def load_admin_page(request, page):
 # here we crete an function that take data from collection enquiry
 
 def jobpost(request):
+    init_mongo()
     if request.method == "POST":
         try:
             data = json.loads(request.body)
@@ -422,6 +431,7 @@ def jobpost(request):
 @login_required_custom
 @csrf_exempt
 def save_profile(request):
+    init_mongo()
     if request.method == "POST":
         user_id = request.session.get("user_id")
         if not user_id:
@@ -463,6 +473,7 @@ def save_profile(request):
     return redirect("/roles/admin_panel/")
 
 def serve_profile_photo(request, profile_id):
+    init_mongo()
     try:
         profile = Profile.objects.get(id=profile_id)
         if profile.photo:
@@ -475,6 +486,7 @@ def serve_profile_photo(request, profile_id):
 @csrf_exempt
 @login_required_custom
 def update_job_status(request):
+    init_mongo()
     if request.method == "POST":
         data = json.loads(request.body)
         job_id = data.get("job_id")
@@ -509,6 +521,7 @@ def update_job_status(request):
     return JsonResponse({"error": "Invalid request"}, status=400)
 @login_required_custom
 def student_dash(request):
+    init_mongo()
     if request.session.get('role') != 'student':
         return redirect('/dashboard/')
 
@@ -586,6 +599,7 @@ def student_dash(request):
         "unread_count": unread_count,
     })
 def send_mentorship_request(request, alumni_id):
+    init_mongo()
     if request.session.get('role') != 'student':
         return redirect('/dashboard/')
 
@@ -611,6 +625,7 @@ def send_mentorship_request(request, alumni_id):
 
 @login_required_custom
 def alumni_dash(request):
+    init_mongo()
     if request.session.get('role') != 'alumni':
         return redirect('/dashboard/')
 
@@ -669,6 +684,7 @@ def alumni_dash(request):
     })
 @login_required_custom
 def load_alumni_page(request, page):
+    init_mongo()
     if request.session.get('role') != 'alumni':
         return redirect('/dashboard/')
 
@@ -680,6 +696,8 @@ def load_alumni_page(request, page):
 @login_required_custom
 @csrf_exempt
 def update_mentorship_status(request):
+    
+    init_mongo()
     if request.session.get('role') != 'alumni':
         return JsonResponse({'error': 'Unauthorized'}, status=403)
 
@@ -707,14 +725,17 @@ def update_mentorship_status(request):
     return JsonResponse({'error': 'Invalid request'}, status=400)
 
 def get_notifications(user):
+    init_mongo()
     return Notification.objects(user=user).order_by('-created_at')
 
 def unread_notification_count(user):
+    init_mongo()
     return Notification.objects(user=user, is_read=False).count()
 
 
 @login_required_custom
 def student_chat(request, mentorship_id):
+    init_mongo()
     if request.session.get("role") != "student":
         return redirect("/dashboard/")
 
@@ -736,6 +757,7 @@ def student_chat(request, mentorship_id):
 
 @login_required_custom
 def private_chat(request, mentorship_id):
+    init_mongo()
     # Fetch mentorship request
     mentorship = MentorshipRequest.objects.get(id=mentorship_id)
 
@@ -765,6 +787,7 @@ def private_chat(request, mentorship_id):
 @csrf_exempt
 @login_required_custom
 def send_private_message(request, mentorship_id):
+    init_mongo()
     if request.method == "POST":
         data = json.loads(request.body)
         msg_text = data.get("message")
