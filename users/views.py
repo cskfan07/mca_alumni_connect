@@ -37,13 +37,13 @@ def login_required_custom(view_func):
 # =============================
 @csrf_exempt
 def register_user(request):
-    
+
     if request.method == 'GET':
-        # agar user browser se GET request bheje (register page open kare)
-        return render(request, 'register.html')  # return a template
+        return render(request, 'register.html')
 
     elif request.method == 'POST':
         data = json.loads(request.body)
+
         username = data.get('username')
         email = data.get('email')
         password = data.get('password')
@@ -51,10 +51,13 @@ def register_user(request):
         roll_no = data.get('roll_no')
         reg_no = data.get('reg_no')
         passoutyear = data.get('endyear')
+
         if not roll_no or not reg_no or not passoutyear:
             return JsonResponse({'error': 'Roll No, Reg No, and Passout Year are required!'}, status=400)
+
         if not username or not email or not password:
             return JsonResponse({'error': 'All fields required'}, status=400)
+
         if User.objects(email=email).first():
             return JsonResponse({'error': 'Email already exists'}, status=400)
 
@@ -72,26 +75,30 @@ def register_user(request):
             roll_no=roll_no,
             reg_no=reg_no,
             passout_Year=passoutyear
-
         )
         user.save()
 
-       email_encoded = quote(email)
-       verify_link = (
-           f"https://mca-alumni-connect.onrender.com/"
-           f"verify-email/{email_encoded}/{token}/"
-         )
-        send_mail(
-            "Verify your email",
-            f"Click this link to v erify your email:\n{verify_link}",
-            settings.EMAIL_HOST_USER,
-            [email],
-            fail_silently=False,
+        email_encoded = quote(email)
+        verify_link = (
+            f"https://mca-alumni-connect.onrender.com/"
+            f"verify-email/{email_encoded}/{token}/"
         )
 
-        return JsonResponse({'message': 'Registration successful! Check your email to verify.'})
+        try:
+            send_mail(
+                "Verify your email",
+                f"Click this link to verify your email:\n{verify_link}",
+                settings.EMAIL_HOST_USER,
+                [email],
+                fail_silently=False,
+            )
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=500)
 
-    # Agar method GET ya POST ke alawa ho, return kare
+        return JsonResponse({
+            'message': 'Registration successful! Check your email to verify.'
+        })
+
     return JsonResponse({'error': 'Invalid request method'}, status=405)
 
 
