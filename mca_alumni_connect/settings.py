@@ -90,14 +90,7 @@ DATABASES = {
     }
 }
 
-# --------------------
-# MongoDB Connection (mongoengine)
-# --------------------
-connect(
-    db=os.environ.get("MONGO_DB_NAME"),
-    host=os.environ.get("MONGO_URI"),
-    serverSelectionTimeoutMS=5000  # Prevents workers from hanging indefinitely
-)
+ 
 
 
 # --------------------
