@@ -1,5 +1,4 @@
 from pathlib import Path
-from mongoengine import connect
 import os
 
 if os.path.exists(".env"):
@@ -151,13 +150,3 @@ EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
 
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
-
-MONGO_URI = os.environ.get("MONGO_URI")
-MONGO_DB = os.environ.get("MONGO_DB_NAME")
-
-if MONGO_URI and MONGO_DB:
-    connect(
-        db=MONGO_DB,
-        host=MONGO_URI,
-        alias="default"
-    )
