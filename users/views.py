@@ -76,8 +76,11 @@ def register_user(request):
         )
         user.save()
 
-        email_encoded = quote(email)
-        verify_link = f"https://mca-alumni-connect.onrender.com/verify-email/{email_encoded}:{token}/"
+       email_encoded = quote(email)
+       verify_link = (
+           f"https://mca-alumni-connect.onrender.com/"
+           f"verify-email/{email_encoded}/{token}/"
+         )
         send_mail(
             "Verify your email",
             f"Click this link to v erify your email:\n{verify_link}",
@@ -92,15 +95,19 @@ def register_user(request):
     return JsonResponse({'error': 'Invalid request method'}, status=405)
 
 
+from urllib.parse import unquote
+
 def verify_email(request, email, token):
-   
+    email = unquote(email)
+
     user = User.objects(email=email, email_token=token).first()
     if not user:
         return HttpResponse("Invalid verification link")
 
-    user.is_Verified = 2  # email verified
-    user.email_token = ""  # clear token
+    user.is_Verified = 2
+    user.email_token = ""
     user.save()
+
     return HttpResponse("Email verified! You can now wait for admin approval.")
 # =============================
 # Login User
