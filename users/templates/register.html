@@ -126,7 +126,7 @@ document.getElementById("registerForm").addEventListener("submit", async (e) => 
         role = "student";
     }
 
-    const response = await fetch("http://127.0.0.1:8000/register/", {
+    const response = await fetch( "https://mca-alumni-connect.onrender.com/register/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, email, password, endyear, role, roll_no, reg_no}),
