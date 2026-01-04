@@ -77,8 +77,7 @@ def register_user(request):
         user.save()
 
         email_encoded = quote(email)
-        verify_link = f"http://127.0.0.1:8000/verify-email/{email_encoded}:{token}/"
-
+        verify_link = f"https://mca-alumni-connect.onrender.com/verify-email/{email_encoded}:{token}/"
         send_mail(
             "Verify your email",
             f"Click this link to verify your email:\n{verify_link}",
@@ -113,10 +112,8 @@ def login_user(request):
         return render(request, 'login.html')
 
     elif request.method == 'POST':
-        data = json.loads(request.body)
-        email = data.get('email')
-        password = data.get('password')
-
+        email = request.POST.get("email")
+        password = request.POST.get("password")
         if not email or not password:
             return JsonResponse({'error': 'Email and password required'}, status=400)
 
