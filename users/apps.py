@@ -16,5 +16,5 @@ class UsersConfig(AppConfig):
                     db=MONGO_DB,
                     host=MONGO_URI,
                     alias='default',
-                    connect=False   # 🔥 VERY IMPORTANT
+                
                 )
