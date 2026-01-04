@@ -80,7 +80,7 @@ def register_user(request):
         verify_link = f"https://mca-alumni-connect.onrender.com/verify-email/{email_encoded}:{token}/"
         send_mail(
             "Verify your email",
-            f"Click this link to verify your email:\n{verify_link}",
+            f"Click this link to v erify your email:\n{verify_link}",
             settings.EMAIL_HOST_USER,
             [email],
             fail_silently=False,
@@ -105,15 +105,25 @@ def verify_email(request, email, token):
 # =============================
 # Login User
 # =============================
+
 @csrf_exempt
 def login_user(request):
     init_mongo()
+
     if request.method == 'GET':
         return render(request, 'login.html')
 
     elif request.method == 'POST':
-        email = request.POST.get("email")
-        password = request.POST.get("password")
+        # 🔥 JSON vs FORM support
+        if request.content_type == "application/json":
+            import json
+            data = json.loads(request.body)
+        else:
+            data = request.POST
+
+        email = data.get("email")
+        password = data.get("password")
+
         if not email or not password:
             return JsonResponse({'error': 'Email and password required'}, status=400)
 
@@ -132,17 +142,13 @@ def login_user(request):
             if user.is_Verified == -1:
                 return JsonResponse({"error": "Your account was rejected"}, status=403)
 
-        #if user loging we need to change is_active to true
-        if user:
-            user.is_Active = True
-            user.save()
-
+        user.is_Active = True
+        user.save()
 
         # Save session
         request.session['user_id'] = str(user.id)
         request.session['username'] = user.username
         request.session['role'] = user.role
-
 
         # Role Based Redirect
         if user.role == "admin":
