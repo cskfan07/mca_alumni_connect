@@ -17,7 +17,8 @@ def init_mongo():
     connect(
         db=MONGO_DB,
         host=MONGO_URI,
-        alias="default"
+        alias="default",
+        uuidRepresentation="standard"
     )
 
     _connected = True
