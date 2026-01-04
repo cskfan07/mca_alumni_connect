@@ -7,13 +7,14 @@ class UsersConfig(AppConfig):
     name = 'users'
 
     def ready(self):
-        """
-        Fork-safe + duplicate-safe MongoEngine connect
-        """
         MONGO_URI = os.getenv("MONGO_URI")
         MONGO_DB = os.getenv("MONGO_DB_NAME")
 
         if MONGO_URI and MONGO_DB:
             if 'default' not in connection._connections:
-                connect(db=MONGO_DB, host=MONGO_URI, alias='default')
-
+                connect(
+                    db=MONGO_DB,
+                    host=MONGO_URI,
+                    alias='default',
+                    connect=False   # 🔥 VERY IMPORTANT
+                )
