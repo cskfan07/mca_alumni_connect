@@ -20,7 +20,7 @@ ALLOWED_HOSTS = [
     "mca-connect-platform.onrender.com",
 ]
 CSRF_TRUSTED_ORIGINS = [
-    "https://*.onrender.com",
+    "https://mca-connect-platform.onrender.com",
 ]
 
 # --------------------
