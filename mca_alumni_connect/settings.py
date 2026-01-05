@@ -84,13 +84,11 @@ WSGI_APPLICATION = 'mca_alumni_connect.wsgi.application'
 # --------------------
 DATABASES = {
     'default': {
-        'ENGINE': 'djongo',
-        'NAME': os.environ.get("MONGO_DB_NAME"),
-        'CLIENT': {
-            'host': os.environ.get("MONGO_URI"),
-        }
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
 
  
 
