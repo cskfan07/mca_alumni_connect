@@ -17,7 +17,7 @@ DEBUG = os.environ.get("DEBUG", "False") == "True"
 ALLOWED_HOSTS = [
     "localhost",
     "127.0.0.1",
-    ".onrender.com",
+    "mca-connect-platform.onrender.com",
 ]
 CSRF_TRUSTED_ORIGINS = [
     "https://*.onrender.com",
@@ -84,8 +84,12 @@ WSGI_APPLICATION = 'mca_alumni_connect.wsgi.application'
 # --------------------
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.environ.get("DB_NAME"),
+        'USER': os.environ.get("DB_USER"),
+        'PASSWORD': os.environ.get("DB_PASSWORD"),
+        'HOST': os.environ.get("DB_HOST"),
+        'PORT': os.environ.get("DB_PORT", "5432"),
     }
 }
 
@@ -135,8 +139,11 @@ ASGI_APPLICATION = 'mca_alumni_connect.asgi.application'
 # Use Redis as channel layer
 CHANNEL_LAYERS = {
     "default": {
-        "BACKEND": "channels.layers.InMemoryChannelLayer",
-    }
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [(os.environ.get("REDIS_URL", "redis://localhost:6379"))],
+        },
+    },
 }
 # SMTP Settings
 
