@@ -84,12 +84,11 @@ WSGI_APPLICATION = 'mca_alumni_connect.wsgi.application'
 # --------------------
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get("DB_NAME"),
-        'USER': os.environ.get("DB_USER"),
-        'PASSWORD': os.environ.get("DB_PASSWORD"),
-        'HOST': os.environ.get("DB_HOST"),
-        'PORT': os.environ.get("DB_PORT", "5432"),
+        'ENGINE': 'djongo',
+        'NAME': os.environ.get("MONGO_DB_NAME"),
+        'CLIENT': {
+            'host': os.environ.get("MONGO_URI"),
+        }
     }
 }
 
