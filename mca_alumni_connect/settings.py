@@ -17,10 +17,10 @@ DEBUG = os.environ.get("DEBUG", "False") == "True"
 ALLOWED_HOSTS = [
     "localhost",
     "127.0.0.1",
-    "mca-connect-platform.onrender.com",
+    "mca-alumni-connect.onrender.com",
 ]
 CSRF_TRUSTED_ORIGINS = [
-    "https://mca-connect-platform.onrender.com",
+    "https://mca-alumni-connect.onrender.com",
 ]
 
 # --------------------
