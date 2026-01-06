@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-# from django.http import JsonResponse
+from django.conf import settings
 from users.mongo import init_mongo
 from django.contrib.auth.hashers import check_password, make_password
 from functools import wraps
